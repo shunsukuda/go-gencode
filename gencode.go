@@ -1,4 +1,4 @@
-package gencode
+package main
 
 import (
 	"bytes"
@@ -36,11 +36,18 @@ func GenCode(name string, input string, output string, data interface{}) (inByte
 	if err = tmpl.Execute(outF, data); err != nil {
 		log.Fatal(err, "cannot do template execute!")
 	}
-	if err = exec.Command("go", "fmt", output).Start(); err != nil {
-		log.Fatal(err, "cannot do go fmt!")
+	if DoGoFmt && output[len(output)-3:] == ".go" {
+		if err = exec.Command("go", "fmt", output).Start(); err != nil {
+			log.Fatal(err, "cannot do go fmt!")
+		}
+	}
+	outF2, err := os.Open(output)
+	defer outF2.Close()
+	if err != nil {
+		log.Fatal(err, "cannot output input file!")
 	}
 	buf.Reset()
-	io.Copy(buf, outF)
+	io.Copy(buf, outF2)
 	outBytes = buf.Len()
 	fmt.Printf("output: %s %d bytes\n", output, outBytes)
 	return
