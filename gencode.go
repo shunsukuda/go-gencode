@@ -3,11 +3,11 @@ package gencode
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"os"
 	"os/exec"
+	"text/template"
 )
 
 var (
